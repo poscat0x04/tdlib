@@ -1,18 +1,18 @@
-name:              tdlib
-version:           0.1.0
-github:            "poscat0x04/tdlib"
-license:           BSD3
-author:            Poscat 
-maintainer:        poscat@mail.poscat.moe
-copyright:         "(c) 2020 Poscat"
+name: tdlib
+version: 0.1.0
+github: "poscat0x04/tdlib"
+license: BSD3
+author: Poscat
+maintainer: poscat@mail.poscat.moe
+copyright: "(c) 2020 Poscat"
 
 extra-source-files:
   - README.md
   - CHANGELOG.md
 
 # Metadata used when publishing your package
-# synopsis:            Short description of your package
-# category:            Web
+synopsis: Bidings to the tdlib json interface
+category: FFI
 
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
@@ -21,6 +21,7 @@ description: Please see the README on GitHub at <https://github.com/poscat0x04/t
 
 dependencies:
   - base >= 4.10 && < 5
+  - bytestring ^>= 0.10.10.0
 
 extra-libraries:
   - tdjson
@@ -52,7 +53,7 @@ default-extensions:
   - EmptyCase
   - MultiWayIf
   - UnicodeSyntax
-  - PatternSynonyms  
+  - PatternSynonyms
   - RecordWildCards
 
 library:
