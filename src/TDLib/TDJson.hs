@@ -57,7 +57,7 @@ foreign import ccall "td_json_client_send"
 foreign import ccall "td_json_client_receive"
   tdJsonClientReceive :: ClientPtr -> CDouble -> IO CString
 
-foreign import ccall "Td_json_client_execute"
+foreign import ccall "td_json_client_execute"
   tdJsonClientExecute :: ClientPtr -> CString -> IO ()
 
 foreign import ccall "td_json_client_destroy"
