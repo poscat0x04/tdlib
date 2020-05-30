@@ -8,3 +8,7 @@ Initial release
 
 * Fix typo
 
+## 0.1.2
+
+* Handle null pointers
+
