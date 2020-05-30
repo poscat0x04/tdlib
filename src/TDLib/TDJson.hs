@@ -117,11 +117,13 @@ clientReceive ::
   -- | The maximum number of seconds allowed for this function to wait for new data.
   Double ->
   -- | JSON-serialized null-terminated incoming update or request response. May be NULL if the timeout expires.
-  IO ByteString
+  IO (Maybe ByteString)
 clientReceive (Client fptr) t =
   withForeignPtr fptr $ \ptr -> do
     cs <- tdJsonClientReceive ptr (CDouble t)
-    packCString cs
+    if cs == nullPtr
+      then pure Nothing
+      else Just <$> packCString cs
 
 -- | Synchronously executes TDLib request. May be called from any thread. Only a few requests can be executed synchronously. Returned pointer will be deallocated by TDLib during next call to 'clientReceive' or 'clientExecute' in the same thread, so it can't be used after that.
 clientExecute ::
