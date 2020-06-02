@@ -1,6 +1,6 @@
 # tdlib
 
-Low level Haskell bindings to the TDLib JSON interface.
+Haskell bindings to the TDLib API though the json interface.
 
 ## Building
 
