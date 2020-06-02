@@ -1,7 +1,15 @@
 {-# LANGUAGE ExistentialQuantification #-}
 
 -- | A heavyweight TDLib effect intepreter written using event loop
-module TDLib.EventLoop where
+module TDLib.EventLoop
+  ( -- * effect interpreter
+    runTDLibEventLoop,
+
+    -- * low level functions
+    runCommand,
+    loop,
+  )
+where
 
 import Control.Concurrent (forkIO, killThread)
 import Control.Concurrent.Chan.Unagi
@@ -83,6 +91,7 @@ readAns index lck ans =
         Nothing -> lock index lck
         _ -> writeTVar ans (M.delete index m)
 
+-- | runs the event loop that receives updates from the client and dispatches them
 loop :: Client -> Double -> Locks -> Ans -> InChan Update -> IO a
 loop client timeout lck ans chan = forever $ do
   bs <- untilJust $ clientReceive client timeout
@@ -98,6 +107,7 @@ loop client timeout lck ans chan = forever $ do
             Success u -> writeChan chan u
         Just i -> atomically $ insertAns i lck ans v
 
+-- | runs a command and waits for its answer
 runCommand :: (ToJSON a, FromJSON b, FromJSON err) => Client -> Int -> Locks -> Ans -> a -> IO (err ∪ b)
 runCommand client i lck ans cmd =
   case toJSON cmd of
@@ -110,6 +120,7 @@ runCommand client i lck ans cmd =
         Error _ -> throwIO $ UnableToParseValue v
         Success r -> pure r
 
+-- | runs the TDLib effect
 runTDLibEventLoop :: Members '[Embed IO] r => Double -> InChan Update -> Sem (TDLib ': r) a -> Sem r a
 runTDLibEventLoop timeout chan m = do
   lck <- embed $ newTVarIO mempty
