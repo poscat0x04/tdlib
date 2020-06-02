@@ -4,8 +4,7 @@
 
 -- | Bindings to TDLib Json interface
 module TDLib.TDJson
-  ( Verbosity (..),
-    Client,
+  ( Client,
 
     -- * Creating, Destroying and Interacting with clients
     newClient,
@@ -31,22 +30,13 @@ import Data.Int
 import Foreign.C
 import Foreign.ForeignPtr
 import Foreign.Ptr
+import TDLib.Types.Common
 
 -- | TDLib client, will be automacially destroyed as soon as there are no references pointing to it (backed by 'ForeignPtr')
 newtype Client = Client (ForeignPtr ())
   deriving newtype (Eq, Ord, Show)
 
 type ClientPtr = Ptr ()
-
--- | Logging verbosity
-data Verbosity
-  = Fatal
-  | Error
-  | Warning
-  | Info
-  | Debug
-  | Verbose
-  deriving (Show, Eq, Enum)
 
 foreign import ccall "td_json_client_create"
   tdJsonClientCreate :: IO ClientPtr
