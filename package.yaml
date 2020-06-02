@@ -22,9 +22,25 @@ description: Please see the README on GitHub at <https://github.com/poscat0x04/t
 dependencies:
   - base >= 4.10 && < 5
   - bytestring ^>= 0.10.10.0
+  - base64-bytestring-type
+  - text
+  - aeson
+  - containers
+  - unordered-containers
+  - stm
+  - polysemy
+  - polysemy-plugin
+  - unagi-chan
+  - monad-loops
+  - tdlib-types
 
 extra-libraries:
   - tdjson
+
+ghc-options:
+  - -fplugin=Polysemy.Plugin
+  - -flate-specialise
+  - -fspecialise-aggressively
 
 default-extensions:
   - OverloadedStrings
