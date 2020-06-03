@@ -85,3 +85,6 @@ tests:
       - -with-rtsopts=-N
     dependencies:
       - tdlib
+      - QuickCheck
+      - quickcheck-text
+      - pretty-simple
