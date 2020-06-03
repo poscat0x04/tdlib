@@ -49,7 +49,7 @@ foreign import ccall interruptible "td_json_client_receive"
   tdJsonClientReceive :: ClientPtr -> CDouble -> IO CString
 
 foreign import ccall interruptible "td_json_client_execute"
-  tdJsonClientExecute :: ClientPtr -> CString -> IO ()
+  tdJsonClientExecute :: ClientPtr -> CString -> IO CString
 
 foreign import ccall interruptible "td_json_client_destroy"
   tdJsonClientDestroy :: ClientPtr -> IO ()
@@ -122,11 +122,14 @@ clientExecute ::
   Client ->
   -- | JSON-serialized null-terminated request to TDLib.
   ByteString ->
-  IO ()
+  IO (Maybe ByteString)
 clientExecute (Client fptr) cmd =
   useAsCString cmd $ \cstr ->
     withForeignPtr fptr $ \ptr -> do
-      tdJsonClientExecute ptr cstr
+      cs <- tdJsonClientExecute ptr cstr
+      if cs == nullPtr
+        then pure Nothing
+        else Just <$> packCString cs
 
 -- | Destroys the TDLib client instance. After this is called the client instance shouldn't be used anymore.
 destroyClient ::
