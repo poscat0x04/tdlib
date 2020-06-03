@@ -1,6 +1,7 @@
 {-# LANGUAGE DerivingStrategies #-}
 {-# LANGUAGE ForeignFunctionInterface #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE InterruptibleFFI #-}
 
 -- | Bindings to TDLib Json interface
 module TDLib.TDJson
@@ -38,39 +39,39 @@ newtype Client = Client (ForeignPtr ())
 
 type ClientPtr = Ptr ()
 
-foreign import ccall "td_json_client_create"
+foreign import ccall interruptible "td_json_client_create"
   tdJsonClientCreate :: IO ClientPtr
 
-foreign import ccall "td_json_client_send"
+foreign import ccall interruptible "td_json_client_send"
   tdJsonClientSend :: ClientPtr -> CString -> IO ()
 
-foreign import ccall "td_json_client_receive"
+foreign import ccall interruptible "td_json_client_receive"
   tdJsonClientReceive :: ClientPtr -> CDouble -> IO CString
 
-foreign import ccall "td_json_client_execute"
+foreign import ccall interruptible "td_json_client_execute"
   tdJsonClientExecute :: ClientPtr -> CString -> IO ()
 
-foreign import ccall "td_json_client_destroy"
+foreign import ccall interruptible "td_json_client_destroy"
   tdJsonClientDestroy :: ClientPtr -> IO ()
 
-foreign import ccall "&td_json_client_destroy"
+foreign import ccall interruptible "&td_json_client_destroy"
   p_clientDestory :: FunPtr (ClientPtr -> IO ())
 
-foreign import ccall "td_set_log_file_path"
+foreign import ccall interruptible "td_set_log_file_path"
   tdSetLogFilePath :: CString -> IO CInt
 
-foreign import ccall "td_set_log_max_file_size"
+foreign import ccall interruptible "td_set_log_max_file_size"
   tdSetLogMaxFileSize :: CLLong -> IO ()
 
-foreign import ccall "td_set_log_verbosity_level"
+foreign import ccall interruptible "td_set_log_verbosity_level"
   tdSetLogVerbosityLevel :: CInt -> IO ()
 
 type CallbackPtr = FunPtr (CString -> IO ())
 
-foreign import ccall "td_set_log_fatal_error_callback"
+foreign import ccall interruptible "td_set_log_fatal_error_callback"
   tdSetLogFatalErrorCallback :: CallbackPtr -> IO ()
 
-foreign import ccall "wrapper"
+foreign import ccall interruptible "wrapper"
   mkCallbackPtr_ :: (CString -> IO ()) -> IO CallbackPtr
 
 mkCallbackPtr :: (ByteString -> IO ()) -> IO CallbackPtr
