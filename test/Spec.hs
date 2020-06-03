@@ -2,6 +2,8 @@ module Main where
 
 import Control.Concurrent (forkIO)
 import Control.Concurrent.Chan.Unagi
+import Data.ByteString (ByteString)
+import Data.ByteString.Base64.Type
 import Data.Text (Text)
 import Data.Text.Arbitrary
 import Polysemy hiding (run)
@@ -42,6 +44,10 @@ main = do
   quickCheck $ squareInt ichan
   quickCheck $ callEmpty ichan
   quickCheck $ callString ichan
+  quickCheck $ callVecInt ichan
+  quickCheck $ callVecIntObject ichan
+  quickCheck $ callVecString ichan
+  quickCheck $ callVecStringObject ichan
 
 -- ** Properties
 
@@ -59,3 +65,31 @@ callString :: InChan Update -> Text -> Property
 callString ichan t = mm ichan $ do
   r <- run $ testCallString (TestCallString t)
   assert $ Inr (TestString t) == r
+
+callVecInt :: InChan Update -> [I32] -> Property
+callVecInt ichan vec = mm ichan $ do
+  r <- run $ testCallVectorInt (TestCallVectorInt vec)
+  assert $ Inr (TestVectorInt vec) == r
+
+callVecIntObject :: InChan Update -> [I32] -> Property
+callVecIntObject ichan vec = mm ichan $ do
+  let v' = fmap TestInt vec
+  r <- run $ testCallVectorIntObject (TestCallVectorIntObject v')
+  assert $ Inr (TestVectorIntObject v') == r
+
+callVecString :: InChan Update -> [Text] -> Property
+callVecString ichan vec = mm ichan $ do
+  r <- run $ testCallVectorString (TestCallVectorString vec)
+  assert $ Inr (TestVectorString vec) == r
+
+callVecStringObject :: InChan Update -> [Text] -> Property
+callVecStringObject ichan vec = mm ichan $ do
+  let v' = fmap TestString vec
+  r <- run $ testCallVectorStringObject (TestCallVectorStringObject v')
+  assert $ Inr (TestVectorStringObject v') == r
+
+callBytes :: InChan Update -> ByteString -> Property
+callBytes ichan bs = mm ichan $ do
+  let bs' = makeByteString64 bs
+  r <- run $ testCallBytes (TestCallBytes bs')
+  assert $ Inr (TestBytes bs') == r
