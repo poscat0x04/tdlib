@@ -31,7 +31,7 @@ dependencies:
   - polysemy-plugin ^>= 0.2.5.0
   - unagi-chan ^>= 0.4.1.3
   - monad-loops
-  - tdlib-types
+  - tdlib-types ^>= 0.2.0
 
 extra-libraries:
   - tdjson

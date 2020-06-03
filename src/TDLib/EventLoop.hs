@@ -28,7 +28,6 @@ import TDLib.Effect
 import TDLib.Errors
 import TDLib.Generated.Types hiding (Error (..))
 import TDLib.TDJson
-import TDLib.Types.Common hiding (Error)
 
 type Ans = TVar (IntMap Value)
 
@@ -106,7 +105,7 @@ loop client timeout lck ans chan = forever $ do
         Just i -> atomically $ insertAns i lck ans v
 
 -- | runs a command and waits for its answer
-runCommand :: (ToJSON a, FromJSON b, FromJSON err) => Client -> Int -> Locks -> Ans -> a -> IO (err ∪ b)
+runCommand :: (ToJSON cmd, FromJSON res) => Client -> Int -> Locks -> Ans -> cmd -> IO res
 runCommand client i lck ans cmd =
   case toJSON cmd of
     Object hm -> do

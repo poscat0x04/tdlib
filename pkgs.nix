@@ -12,9 +12,6 @@ in
   monad-loops
   tdlib-types
 
-  hedgehog
-  hspec
-  tasty
   QuickCheck
-  generic-random
+  quickcheck-text
 ]

@@ -1,0 +1,3 @@
+{
+  "ghcSimple.replCommand": "cabal repl tdlib-test --builddir=.repl-build"
+}
