@@ -24,14 +24,14 @@ dependencies:
   - bytestring
   - text
   - aeson >= 1.4.7 && < 1.6
-  - containers ^>= 1.6.2.1
+  - containers ^>= 0.6.2.1
   - unordered-containers ^>= 0.2.10.0
   - stm ^>= 2.5.0.0
   - polysemy ^>= 1.3.0.0
   - polysemy-plugin ^>= 0.2.5.0
-  - unagi-chan ^>= 0.2.5.0
+  - unagi-chan ^>= 0.4.1.3
   - monad-loops
-  - tdlib-types ^>= 0.1.0
+  - tdlib-types
 
 extra-libraries:
   - tdjson
@@ -84,6 +84,6 @@ tests:
       - -with-rtsopts=-N
     dependencies:
       - tdlib
-      - base64-bytestring-type ^>= 1.0.1
-      - QuickCheck ^>= 2.14
-      - quickcheck-text ^>= 0.1.2.1
+      - base64-bytestring-type
+      - QuickCheck
+      - quickcheck-text
