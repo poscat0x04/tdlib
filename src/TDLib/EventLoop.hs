@@ -18,9 +18,7 @@ import Control.Exception
 import Control.Monad
 import Control.Monad.Loops
 import Data.Aeson
-import qualified Data.ByteString.Char8 as BS
 import Data.ByteString.Lazy (toStrict)
-import qualified Data.HashMap.Strict as HM
 import qualified Data.HashMap.Strict as HM
 import Data.IntMap.Strict (IntMap)
 import qualified Data.IntMap.Strict as M
@@ -119,6 +117,7 @@ runCommand client i lck ans cmd =
       case m of
         Error _ -> throwIO $ UnableToParseValue v
         Success r -> pure r
+    v -> throwIO $ UnableToParseValue v
 
 -- | runs the TDLib effect
 runTDLibEventLoop :: Members '[Embed IO] r => Double -> InChan Update -> Sem (TDLib ': r) a -> Sem r a
