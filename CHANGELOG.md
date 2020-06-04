@@ -12,3 +12,6 @@ Initial release
 
 * Handle null pointers
 
+## 0.2.0
+
+* Update the dependency tdlib-types to 0.2.0
