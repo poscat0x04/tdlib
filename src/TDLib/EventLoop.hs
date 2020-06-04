@@ -12,7 +12,6 @@ module TDLib.EventLoop
 where
 
 import Control.Concurrent (forkIO, killThread)
-import Control.Concurrent.Chan.Unagi
 import Control.Concurrent.STM
 import Control.Exception
 import Control.Monad
@@ -89,8 +88,8 @@ readAns index lck ans =
         _ -> writeTVar ans (M.delete index m)
 
 -- | runs the event loop that receives updates from the client and dispatches them
-loop :: Client -> Double -> Locks -> Ans -> InChan Update -> IO a
-loop client timeout lck ans chan = forever $ do
+loop :: Client -> Double -> Locks -> Ans -> (Update -> IO ()) -> IO a
+loop client timeout lck ans cont = forever $ do
   bs <- untilJust $ clientReceive client timeout
   let m = decodeStrict bs
   case m of
@@ -101,7 +100,7 @@ loop client timeout lck ans chan = forever $ do
           let r = fromJSON v
           case r of
             Error _ -> throwIO $ UnableToParseValue v
-            Success u -> writeChan chan u
+            Success u -> cont u
         Just i -> atomically $ insertAns i lck ans v
 
 -- | runs a command and waits for its answer
@@ -119,12 +118,12 @@ runCommand client i lck ans cmd =
     v -> throwIO $ UnableToParseValue v
 
 -- | runs the TDLib effect
-runTDLibEventLoop :: Members '[Embed IO] r => Double -> InChan Update -> Sem (TDLib ': r) a -> Sem r a
-runTDLibEventLoop timeout chan m = do
+runTDLibEventLoop :: Members '[Embed IO] r => Double -> (Update -> IO ()) -> Sem (TDLib ': r) a -> Sem r a
+runTDLibEventLoop timeout cont m = do
   lck <- embed $ newTVarIO mempty
   ans <- embed $ newTVarIO mempty
   c <- embed newClient
-  tid <- embed $ forkIO $ loop c timeout lck ans chan
+  tid <- embed $ forkIO $ loop c timeout lck ans cont
   counter <- embed newCounter
   let runTD = interpret $ \case
         RunCmd cmd -> do
