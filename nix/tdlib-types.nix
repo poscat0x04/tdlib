@@ -3,8 +3,8 @@
 }:
 mkDerivation {
   pname = "tdlib-types";
-  version = "0.2.0";
-  sha256 = "80fa5956289ab29b05cdbefb0393e103404b38af4da46b8a4828d46e69ae63ae";
+  version = "0.3.0";
+  sha256 = "e21f5b82737185638607a571b5b5798bfdf35677fb542355b55cc0503e130f72";
   libraryHaskellDepends = [
     aeson base base64-bytestring-type bytestring language-tl polysemy
     polysemy-plugin tdlib-gen text
