@@ -56,43 +56,43 @@ main = do
 
 squareInt :: InChan Update -> I32 -> Property
 squareInt ichan i = mm ichan $ do
-  r <- run $ testSquareInt (TestSquareInt i)
+  r <- run $ testSquareInt i
   assert $ Inr (TestInt $ (i :: Int) ^ (2 :: Int)) == r
 
 callEmpty :: InChan Update -> Property
 callEmpty ichan = mm ichan $ do
-  ok <- run $ testCallEmpty TestCallEmpty
+  ok <- run $ testCallEmpty
   assert $ Inr Ok == ok
 
 callString :: InChan Update -> Text -> Property
 callString ichan t = mm ichan $ do
-  r <- run $ testCallString (TestCallString t)
+  r <- run $ testCallString t
   assert $ Inr (TestString t) == r
 
 callVecInt :: InChan Update -> [I32] -> Property
 callVecInt ichan vec = mm ichan $ do
-  r <- run $ testCallVectorInt (TestCallVectorInt vec)
+  r <- run $ testCallVectorInt vec
   assert $ Inr (TestVectorInt vec) == r
 
 callVecIntObject :: InChan Update -> [I32] -> Property
 callVecIntObject ichan vec = mm ichan $ do
   let v' = fmap TestInt vec
-  r <- run $ testCallVectorIntObject (TestCallVectorIntObject v')
+  r <- run $ testCallVectorIntObject v'
   assert $ Inr (TestVectorIntObject v') == r
 
 callVecString :: InChan Update -> [Text] -> Property
 callVecString ichan vec = mm ichan $ do
-  r <- run $ testCallVectorString (TestCallVectorString vec)
+  r <- run $ testCallVectorString vec
   assert $ Inr (TestVectorString vec) == r
 
 callVecStringObject :: InChan Update -> [Text] -> Property
 callVecStringObject ichan vec = mm ichan $ do
   let v' = fmap TestString vec
-  r <- run $ testCallVectorStringObject (TestCallVectorStringObject v')
+  r <- run $ testCallVectorStringObject v'
   assert $ Inr (TestVectorStringObject v') == r
 
 callBytes :: InChan Update -> ByteString -> Property
 callBytes ichan bs = mm ichan $ do
   let bs' = makeByteString64 bs
-  r <- run $ testCallBytes (TestCallBytes bs')
+  r <- run $ testCallBytes bs'
   assert $ Inr (TestBytes bs') == r

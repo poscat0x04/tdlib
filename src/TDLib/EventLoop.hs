@@ -26,7 +26,7 @@ import Data.Maybe
 import Polysemy
 import TDLib.Effect
 import TDLib.Errors
-import TDLib.Generated.Types hiding (Error (..))
+import TDLib.Generated.Types hiding (Error (..), error)
 import TDLib.TDJson
 
 type Ans = TVar (IntMap Value)
