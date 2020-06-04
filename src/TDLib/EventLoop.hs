@@ -6,6 +6,8 @@ module TDLib.EventLoop
     runTDLibEventLoop,
 
     -- * low level functions
+    Ans,
+    Locks,
     runCommand,
     loop,
   )
