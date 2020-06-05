@@ -15,3 +15,8 @@ Initial release
 ## 0.2.0
 
 * Update the dependency tdlib-types to 0.2.0
+
+## 0.3.0
+
+* Get rid of unagi-chan
+
