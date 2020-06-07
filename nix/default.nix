@@ -2,10 +2,8 @@
 let
   sources = import ./sources.nix;
   pkgs = import sources.nixpkgs { };
-  inherit (sources) tdlib-types;
 
   deps = {
-    tdlib-types = import tdlib-types { inherit compiler; };
     tdjson = pkgs.tdlib;
   };
 
@@ -25,6 +23,8 @@ let
       cabal-install
       ormolu
       hlint
+    ] ++ [
+      hPkgs.ghcide
     ];
 
     buildInputs = with pkgs; [
