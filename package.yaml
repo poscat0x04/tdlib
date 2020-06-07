@@ -86,3 +86,4 @@ tests:
       - base64-bytestring-type
       - QuickCheck
       - quickcheck-text
+      - quickcheck-instances

@@ -1,7 +1,11 @@
+{-# LANGUAGE ExistentialQuantification #-}
+
 module Main where
 
+import Control.Concurrent
 import Data.ByteString (ByteString)
 import Data.ByteString.Base64.Type
+import Data.Foldable
 import Data.Text.Arbitrary
 import Polysemy hiding (run)
 import Polysemy.Resource
@@ -11,6 +15,7 @@ import TDLib.Generated.Functions
 import TDLib.Generated.Types hiding (Text)
 import TDLib.Types.Common
 import Test.QuickCheck
+import Test.QuickCheck.Instances.ByteString ()
 import Test.QuickCheck.Monadic
 
 -- ** Helper functions
@@ -30,14 +35,23 @@ rr m = (monadicIO . run . runFinal . runTDLibEventLoop 1 (const (pure ()))) (set
 -- ** Main
 
 main :: IO ()
-main = do
-  quickCheck $ squareInt
-  quickCheck $ callEmpty
-  quickCheck $ callString
-  quickCheck $ callVecInt
-  quickCheck $ callVecIntObject
-  quickCheck $ callVecString
-  quickCheck $ callVecStringObject
+main = traverse_ check checkedProperties
+
+data Test = forall a. Testable a => Test a
+
+check :: Test -> IO ()
+check (Test t) = quickCheck t
+
+checkedProperties :: [Test]
+checkedProperties =
+  [ Test squareInt,
+    Test callEmpty,
+    Test callString,
+    Test callVecInt,
+    Test callVecIntObject,
+    Test callVecString,
+    Test callBytes
+  ]
 
 -- ** Properties
 
