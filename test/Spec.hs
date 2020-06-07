@@ -4,6 +4,7 @@ import Data.ByteString (ByteString)
 import Data.ByteString.Base64.Type
 import Data.Text.Arbitrary
 import Polysemy hiding (run)
+import Polysemy.Resource
 import TDLib.Effect
 import TDLib.EventLoop
 import TDLib.Generated.Functions
@@ -16,15 +17,15 @@ import Test.QuickCheck.Monadic
 
 mm ::
   Testable a =>
-  PropertyM (Sem '[TDLib, Embed IO]) a ->
+  PropertyM (Sem _) a ->
   Property
 mm = monadic rr
 
 rr ::
   Testable a =>
-  Sem '[TDLib, Embed IO] a ->
+  Sem _ a ->
   Property
-rr m = (monadicIO . run . runM . runTDLibEventLoop 0.1 (const (pure ()))) (setVerbosity Fatal >> m)
+rr m = (monadicIO . run . runFinal . runTDLibEventLoop 1 (const (pure ()))) (setVerbosity Fatal >> m)
 
 -- ** Main
 

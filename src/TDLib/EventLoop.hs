@@ -13,9 +13,9 @@ module TDLib.EventLoop
   )
 where
 
-import Control.Concurrent (forkIO, killThread)
+import Control.Concurrent (forkIOWithUnmask, killThread)
 import Control.Concurrent.STM
-import Control.Exception
+import Control.Exception hiding (bracket, finally)
 import Control.Monad
 import Control.Monad.Loops
 import Data.Aeson
@@ -25,6 +25,7 @@ import Data.IntMap.Strict (IntMap)
 import qualified Data.IntMap.Strict as M
 import Data.Maybe
 import Polysemy
+import Polysemy.Resource hiding (onException)
 import TDLib.Effect
 import TDLib.Errors
 import TDLib.Generated.Types hiding (Error (..), error)
@@ -120,27 +121,25 @@ runCommand client i lck ans cmd =
     v -> throwIO $ UnableToParseValue v
 
 -- | runs the TDLib effect
-runTDLibEventLoop :: Members '[Embed IO] r => Double -> (Update -> IO ()) -> Sem (TDLib ': r) a -> Sem r a
-runTDLibEventLoop timeout cont m = do
-  lck <- embed $ newTVarIO mempty
-  ans <- embed $ newTVarIO mempty
-  c <- embed newClient
-  tid <- embed $ forkIO $ loop c timeout lck ans cont
-  counter <- embed newCounter
+runTDLibEventLoop :: Members '[Final IO] r => Double -> (Update -> IO ()) -> Sem (TDLib ': Resource ': r) a -> Sem r a
+runTDLibEventLoop timeout cont m = resourceToIOFinal $ do
+  lck <- embedFinal $ newTVarIO mempty
+  ans <- embedFinal $ newTVarIO mempty
+  c <- embedFinal newClient
+  counter <- embedFinal newCounter
   let runTD = interpret $ \case
         RunCmd cmd -> do
-          i <- embed $ countUp counter
-          embed $ runCommand c i lck ans cmd
+          i <- embedFinal $ countUp counter
+          embedFinal $ runCommand c i lck ans cmd
         SetVerbosity verbosity -> do
-          embed $ setLogVerbosityLevel verbosity
+          embedFinal $ setLogVerbosityLevel verbosity
         SetFatalErrorCallback callback -> do
-          embed $ setLogFatalErrorCallback callback
+          embedFinal $ setLogFatalErrorCallback callback
         SetLogPath path -> do
-          embed $ setLogFilePath path
+          embedFinal $ setLogFilePath path
         SetLogMaxSize size -> do
-          embed $ setLogMaxFileSize size
-  r <- runTD m
-  embed $ do
-    killThread tid
-    destroyClient c
-  pure r
+          embedFinal $ setLogMaxFileSize size
+  bracket
+    (embedFinal $ forkIOWithUnmask $ \restore -> restore $ loop c timeout lck ans cont)
+    (embedFinal . killThread)
+    (\_ -> runTD m)
