@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE ExistentialQuantification #-}
 
 -- | A heavyweight TDLib effect intepreter written using event loop
@@ -20,7 +21,11 @@ import Control.Monad
 import Control.Monad.Loops
 import Data.Aeson
 import Data.ByteString.Lazy (toStrict)
+#if MIN_VERSION_aeson(2,0,0)
+import qualified Data.Aeson.KeyMap as HM
+#else
 import qualified Data.HashMap.Strict as HM
+#endif
 import Data.IntMap.Strict (IntMap)
 import qualified Data.IntMap.Strict as M
 import Data.Maybe
